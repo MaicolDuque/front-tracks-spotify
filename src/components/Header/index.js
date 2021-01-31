@@ -17,9 +17,18 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
   },
   title: {
-    flexGrow: 1,
-    paddingRight: '10px'
+    paddingRight: '10px',
+    fontSize: '2rem'
   },
+  img: {
+    width: '200px',
+    maxWidth: '38%'
+  },
+  toolbar: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap'
+  }
 }));
 
 export default function Header() {
@@ -27,11 +36,11 @@ export default function Header() {
 
   return (
     <AppBar position="static" className={classes.root}>
-      <Toolbar>
+      <Toolbar className={classes.toolbar}>
         <Typography variant="h3" className={classes.title}>
-          Canciones de 
+          Buscar canciones en
         </Typography>
-        <img src={LogoSpotify} alt="logo spotify" width="200" />
+        <img src={LogoSpotify} alt="logo spotify" className={classes.img} />
       </Toolbar>
     </AppBar>
   )
