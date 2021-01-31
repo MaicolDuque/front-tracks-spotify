@@ -42,7 +42,6 @@ export default function Home() {
       .then(res => res.json())
       .then(data => {
         setTracks(data.tracks.items)
-        console.log(data.tracks.items)
       })
   }
 
@@ -55,6 +54,7 @@ export default function Home() {
           label="Buscar canciones"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={e => (e.key === 'Enter') ? getTracks() : null}
           endAdornment={
             <InputAdornment position="end">
               <SearchIcon edge="end" />
