@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Button, FormControl, InputAdornment, InputLabel, makeStyles, OutlinedInput } from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/Search';
 import Track from '../../components/Track/Index';
+import Paginations from '../../components/Pagination';
 
 const infoStyles = makeStyles((theme) => ({
   button: {
@@ -26,9 +27,10 @@ const infoStyles = makeStyles((theme) => ({
   },
   tracks: {
     display: 'grid',
-    gridTemplateColumns: "repeat(auto-fit, minmax(400px,max-content))",
+    gridTemplateColumns: "repeat(auto-fit, minmax(345px,max-content))",
     justifyContent: 'space-evenly',
-    gridRowGap: '2.5rem'
+    gridRowGap: '2.5rem',
+    gridColumnGap: '1rem'
   }
 }));
 
@@ -36,12 +38,14 @@ export default function Home() {
   const classes = infoStyles()
   const [search, setSearch] = useState('')
   const [tracks, setTracks] = useState([])
+  const [infoPages, setInfoPages] = useState({ total: 0, limit: 12, show: false })
 
-  const getTracks = () => {
-    fetch(`http://localhost:5000/search?q=${search}`)
+  const getTracks = (page = 0) => {
+    fetch(`http://localhost:5000/search?q=${search}&page=${page}&limit=${infoPages.limit}`)
       .then(res => res.json())
-      .then(data => {
-        setTracks(data.tracks.items)
+      .then(({ tracks }) => {
+        setTracks(tracks.items)
+        setInfoPages({ total: tracks.total, limit: tracks.limit, show: true })
       })
   }
 
@@ -68,13 +72,14 @@ export default function Home() {
         name="search"
         variant="contained"
         style={{ display: 'flex' }}
-        onClick={getTracks}
+        onClick={() => getTracks(0)}
         className={classes.button}>
         Buscar
       </Button>
       <div className={classes.tracks}>
         {tracks.map(track => <Track key={track.id} track={track} />)}
       </div>
+      <Paginations {...infoPages} changePage={(p) => getTracks(p)} />
     </div>
   )
 }

@@ -67,7 +67,7 @@ export default function Detail() {
 
   return (
     <Card className={classes.root}>
-      <img className={classes.cover} src={track.album ? track.album.images[1].url : ''} alt="profile" />
+      <img className={classes.cover} src={track.album ? track.album.images[1].url : 'https://www.searchpng.com/wp-content/uploads/2019/02/Profile-PNG-Icon.png'} alt="profile" />
       <div className={classes.details}>
         <span className={classes.title}>{track.name}</span>
         <div className={classes.info}>

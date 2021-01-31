@@ -14,6 +14,7 @@ import useArtists from '../../hooks/useArtists';
 const useStyles = makeStyles({
   root: {
     maxWidth: 345,
+    // maxWidth: '100%',
     // marginBottom: '4%'
   },
   media: {
