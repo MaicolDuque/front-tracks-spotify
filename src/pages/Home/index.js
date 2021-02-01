@@ -46,19 +46,27 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1)
 
   const getTracks = (page = 0) => {
-    setLoading(true)
-    fetch(`${process.env.REACT_APP_URL}/search?q=${search}&page=${page}&limit=${infoPages.limit}`)
-      .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then(({ tracks }) => {
-        setTracks(tracks.items)
-        setCurrentPage(page+1)
-        setInfoPages({ total: tracks.total, limit: tracks.limit, show: true })
-        setLoading(false)
-      })
-      .catch( error => {
-        setLoading(false)
-        setInfoAlert({ type: 'error', info: `Error al consultar canciones: ${error}`, show: true})
-      })
+    if(search){
+      setLoading(true)
+      fetch(`${process.env.REACT_APP_URL}/search?q=${search}&page=${page}&limit=${infoPages.limit}`)
+        .then(res => res.ok ? res.json() : Promise.reject(res))
+        .then(({ tracks }) => {
+          if(tracks.items.length > 0){
+            setTracks(tracks.items)
+            setCurrentPage(page+1)
+            setInfoPages({ total: tracks.total, limit: tracks.limit, show: true })
+          }else{
+            setInfoAlert({ type: 'info', info: `No se encontraron canciones con el nombre: ${search}`, show: true})
+          }
+          setLoading(false)
+        })
+        .catch( error => {
+          setLoading(false)
+          setInfoAlert({ type: 'error', info: `Error al consultar canciones: ${error}`, show: true})
+        })
+    }else{
+      setInfoAlert({ type: 'error', info: `Debe ingresar el nombre de la canción!`, show: true})
+    }
   }
 
   return (

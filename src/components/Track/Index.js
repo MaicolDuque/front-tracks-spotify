@@ -54,7 +54,7 @@ export default function Track({ track }) {
         </CardContent>
       </CardActionArea>
       <CardActions style={{justifyContent: 'flex-end'}} onClick={viewDetails}>
-        <Button size="small">
+        <Button size="small" className="view-detail">
           Ver Detalles
           <VisibilityIcon style={{marginLeft: '7px'}} />
         </Button>
