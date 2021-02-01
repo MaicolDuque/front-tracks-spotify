@@ -5,6 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import PlayCircleFilledWhiteIcon from '@material-ui/icons/PlayCircleFilledWhite';
 import Card from '@material-ui/core/Card';
 import useArtists from '../../hooks/useArtists';
+import Spinner from '../../components/Spinner'
+import AlertInfo from '../../components/AlertInfo';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,6 +52,8 @@ export default function Detail() {
   const classes = useStyles()
   const { id } = useParams()
   const [track, setTrack] = useState({})
+  const [loading, setLoading] = useState(false)
+  const [infoAlert, setInfoAlert] = useState({ info: '', type: '', show: false})
   const { stringArtists } = useArtists(track?.album?.artists)
 
   const calculateTime = () => {
@@ -58,31 +62,44 @@ export default function Detail() {
     return `${minutes} min ${seconds} seg`
   }
   useEffect(() => {
-    fetch(`http://localhost:5000/search/track/${id}`)
-      .then(res => res.json())
+    setLoading(true)
+    fetch(`${process.env.REACT_APP_URL}/search/track/${id}`)
+      .then(res => res.ok ? res.json() : Promise.reject(res))
       .then(data => {
         setTrack(data)
+        setLoading(false)
+      })
+      .catch( error => {
+        setLoading(false)
+        setInfoAlert({ type: 'error', info: `Error al consultar canción: ${error}`, show: true})
       })
   }, [id])
 
   return (
-    <Card className={classes.root}>
-      <img className={classes.cover} src={track.album ? track.album.images[1].url : 'https://www.searchpng.com/wp-content/uploads/2019/02/Profile-PNG-Icon.png'} alt="profile" />
-      <div className={classes.details}>
-        <span className={classes.title}>{track.name}</span>
-        <div className={classes.info}>
-          <div> <strong>Cantante:</strong> {stringArtists}</div>
-          <div> <strong>Año lanzamiento:</strong> {track.album?.release_date.split('-')[0]}</div>
-          <div> <strong>Cantidad de canciones:</strong> {track.track_number} {track.track_number > 1 ? 'canciones' : 'canción'}</div>
-          <div> <strong>Duración:</strong> {calculateTime()}</div>
-          <div>
-            <a className={classes.sectionPlay} href={track?.external_urls?.spotify} target="_blank" rel="noreferrer">
-              <PlayCircleFilledWhiteIcon className={classes.play} />
-              <span style={{ fontSize: '14px' }}>Reproducir en Spotify</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </Card>
+    <>
+      { loading ? <Spinner /> :
+        <>
+          <AlertInfo {...infoAlert} hideAlert={() => setInfoAlert({ ...infoAlert, show: false })} />
+          <Card className={classes.root}>
+            <img className={classes.cover} src={track.album ? track.album.images[1].url : 'https://www.searchpng.com/wp-content/uploads/2019/02/Profile-PNG-Icon.png'} alt="profile" />
+            <div className={classes.details}>
+              <span className={classes.title}>{track.name}</span>
+              <div className={classes.info}>
+                <div> <strong>Cantante:</strong> {stringArtists}</div>
+                <div> <strong>Año lanzamiento:</strong> {track.album?.release_date.split('-')[0]}</div>
+                <div> <strong>Cantidad de canciones:</strong> {track.track_number} {track.track_number > 1 ? 'canciones' : 'canción'}</div>
+                <div> <strong>Duración:</strong> {calculateTime()}</div>
+                <div>
+                  <a className={classes.sectionPlay} href={track?.external_urls?.spotify} target="_blank" rel="noreferrer">
+                    <PlayCircleFilledWhiteIcon className={classes.play} />
+                    <span style={{ fontSize: '14px' }}>Reproducir en Spotify</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </>
+      }
+    </>
   )
 }

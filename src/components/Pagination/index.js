@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import Pagination from '@material-ui/lab/Pagination';
 
 const useStyles = makeStyles((theme) => ({
@@ -15,26 +14,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Paginations({ total, limit, show, changePage }) {
+export default function Paginations({ total, limit, show , changePage, currentPage }) {
   const classes = useStyles();
-  const [page, setPage] = React.useState(1);
-  const [pages, setPages] = React.useState(10);
+  const totalPages = Math.ceil(total / limit)
   const handleChange = (event, value) => {
-    setPage(value);
-    changePage(value - 1)
+    console.log("page=>", value)
+    changePage(value-1)
   };
-
-  useEffect(() => {
-    const totalPages = Math.ceil(total / limit)
-    setPages(totalPages)
-  }, [total, limit])
-
 
   return (
     <>
       { show &&
         <div className={classes.root}>
-          <Pagination count={pages} page={page} onChange={handleChange} />
+          <Pagination count={totalPages} page={currentPage} onChange={handleChange} />
         </div>
       }
     </>
